@@ -1,4 +1,4 @@
-import { Section } from "./types";
+import { Section } from "@/types/section";
 
 export const NAV_ITEMS: { id: Section; label: string }[] = [
   { id: "home", label: "Home" },
