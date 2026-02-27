@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
-import { Section } from "./types";
 import { NAV_IDS } from "./constants";
+import { Section } from "@/types/section";
 
 interface onThemeButtonClick {
   setTheme: (theme: string) => void;
