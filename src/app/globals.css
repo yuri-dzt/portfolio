@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+
+  /* desaceleração exponencial — a única família de curvas usada no site */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: theme("colors.bg");
+  color: theme("colors.ink");
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* respiro de scroll para âncoras não ficarem embaixo da navbar */
+section[id] {
+  scroll-margin-top: 90px;
+}
+
+::selection {
+  background: theme("colors.accent");
+  color: theme("colors.bg");
+}
+
+/* barra de rolagem discreta */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: theme("colors.bg");
+}
+::-webkit-scrollbar-thumb {
+  background: theme("colors.line");
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: theme("colors.faint");
+}
+
+@layer utilities {
+  /* barra fixa sobre o papel: opacidade alta, não vidro decorativo */
+  .glass {
+    background: color-mix(in oklab, theme("colors.bg") 82%, transparent);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Entrada no carregamento (dobra inicial).
+
+   Animação, não transição: dispara sozinha ao carregar, com `both` para
+   segurar o quadro inicial. Sem a classe `js` nada disso existe e o hero
+   aparece inteiro — inclusive em renderizador que não executa script.
+   --------------------------------------------------------------- */
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+}
+
+@keyframes enter-tilt {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(-52deg) translate3d(0, 22px, 0);
+  }
+}
+
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A dobra é coreografada pelo GSAP; o CSS só segura o primeiro quadro para
+   não haver flash. Sem a classe `js`, nada disso existe e o texto aparece. */
+.js [data-split],
+.js [data-enter],
+.js [data-photo] {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------
+   Entrada dos blocos ao entrar na viewport.
+
+   O estado escondido só existe quando a classe `js` está no <html>,
+   escrita pelo script inline do layout. Sem JS, ou num renderizador
+   que não executa scripts, tudo já nasce visível.
+   --------------------------------------------------------------- */
+.js [data-reveal] {
+  opacity: 0;
+  transition:
+    opacity 640ms var(--ease-out-expo),
+    transform 720ms var(--ease-out-expo),
+    clip-path 820ms var(--ease-out-expo);
+}
+
+/* texto corrido e listas: sobem alguns pixels */
+.js [data-reveal="rise"] {
+  transform: translate3d(0, 16px, 0);
+}
+
+/* títulos: a linha é descoberta de baixo para cima */
+.js [data-reveal="wipe"] {
+  clip-path: inset(0 0 108% 0);
+  transform: translate3d(0, 6px, 0);
+}
+
+/* blocos com volume: entram girando, como um painel caindo no lugar */
+.js [data-reveal="tilt"] {
+  transform: perspective(1200px) rotateX(9deg) translate3d(0, 30px, -60px);
+  transform-origin: 50% 100%;
+}
+
+.js [data-reveal][data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+/* só o wipe mantém clip-path; nos outros ele cortaria o card ao subir em 3D.
+   A folga embaixo evita cortar sombra ou descida de letra. */
+.js [data-reveal="wipe"][data-visible] {
+  clip-path: inset(0 0 -30% 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  /* nada de entrada: o conteúdo já está no lugar */
+  .js [data-reveal],
+  .js [data-reveal][data-visible],
+  .js [data-split],
+  .js [data-photo],
+  .js [data-enter] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}
