@@ -20,6 +20,9 @@ export function Contact() {
     <Section id="contato">
       {/* o segundo campo de pigmento: a página abre e fecha na cor da marca */}
       <div className="relative overflow-hidden rounded-3xl bg-field p-8 text-on-field sm:p-14">
+        {/* a luz que atravessa o campo por baixo do texto */}
+        <span aria-hidden className="field-breath" />
+
         <div className="relative">
           <Reveal>
             <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-[1.06] tracking-[-0.02em] text-on-field sm:text-[2.6rem]">
@@ -50,28 +53,31 @@ export function Contact() {
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Cinco caixas com ícone dentro de outra caixa viravam painel de
+              dashboard no meio de uma carta. Como lista de fios, cada canal é
+              uma linha que se percorre — e a seta ganha o gesto, deslizando
+              para fora no hover. */}
+          <div className="mt-10 border-t border-on-field/25">
             {channels.map((c, i) => (
-              <Reveal key={c.label} delay={(i % 3) * 0.05}>
+              <Reveal key={c.label} delay={Math.min(i, 3) * 0.05}>
                 <a
                   href={c.href}
                   {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="group flex items-center gap-3 rounded-xl border border-on-field/20 bg-on-field/[0.08] px-4 py-3.5 transition-colors duration-300 hover:border-on-field/45 hover:bg-on-field/15"
+                  className="group flex items-center gap-4 border-b border-on-field/25 py-4 transition-colors duration-300 hover:border-on-field/60"
                 >
-                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-lg bg-on-field/15 text-on-field">
-                    <c.icon size={16} />
+                  <c.icon
+                    size={17}
+                    className="flex-none text-on-field-soft transition-colors duration-300 group-hover:text-on-field"
+                  />
+                  <span className="text-sm font-medium text-on-field">
+                    {c.label}
                   </span>
-                  <span className="min-w-0">
-                    <span className="block text-sm font-medium text-on-field">
-                      {c.label}
-                    </span>
-                    <span className="block truncate text-xs text-on-field-soft">
-                      {c.value}
-                    </span>
+                  <span className="min-w-0 truncate text-xs text-on-field-soft">
+                    {c.value}
                   </span>
                   <ArrowUpRight
                     size={15}
-                    className="ml-auto text-on-field-soft transition-colors group-hover:text-on-field"
+                    className="ml-auto flex-none text-on-field-soft transition-[transform,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-on-field"
                   />
                 </a>
               </Reveal>

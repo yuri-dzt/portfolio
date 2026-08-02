@@ -94,7 +94,10 @@ export function LayersScene() {
 
   return (
     <div ref={root} id="camadas">
-      <div ref={stage} className="flex min-h-[100svh] items-center py-20">
+      {/* `py` curto: com o conteúdo centrado numa caixa de uma tela, cada
+          pixel de padding aqui é vazio que entra na tela antes do texto — e
+          ele cai justamente na emenda com o fundo vazio da dobra. */}
+      <div ref={stage} className="flex min-h-[100svh] items-center py-10">
         <div className="mx-auto grid w-[92%] max-w-content items-center gap-12 md:grid-cols-[0.9fr_1.1fr]">
           <div>
             <div className="h-px w-full bg-line" />

@@ -1,63 +1,19 @@
-"use client";
-
-import { useLayoutEffect, useRef } from "react";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { techGroups } from "@/data/site";
-import { gsap } from "@/lib/gsap";
 
 /**
- * Sete cards iguais em grade viraram três faixas que andam sozinhas, em
- * direções alternadas. É movimento perceptível sem precisar de scroll nem de
- * mouse — e some a grade de cards repetida, que é a assinatura visual de
- * página gerada.
+ * As três esteiras infinitas saíram, e nada girando entrou no lugar.
+ *
+ * O problema delas nunca foi falta de movimento: para encher três linhas elas
+ * embaralhavam os grupos — "Fastify" passava colado em "pgvector" sem nada em
+ * comum — e o que sobrava era sopa de etiqueta, a assinatura visual de página
+ * gerada. Cada frente da stack agora ocupa a própria linha, com o nome dela na
+ * margem, no mesmo idioma de ficha técnica que "Sobre" e "Resultados" usam.
+ *
+ * Sem animação própria: a entrada por `Reveal` basta. Uma lista de ferramentas
+ * é para ser consultada, não assistida.
  */
-const rows = [
-  [...techGroups[0].items, ...techGroups[3].items],
-  [...techGroups[1].items, ...techGroups[2].items],
-  [...techGroups[4].items, ...techGroups[5].items, ...techGroups[6].items],
-];
-
-function Marquee({ items, reverse }: { items: string[]; reverse?: boolean }) {
-  const track = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const media = gsap.matchMedia();
-
-      media.add("(prefers-reduced-motion: no-preference)", () => {
-        // a lista é duplicada no DOM: animar até -50% e repetir emenda sem salto
-        const tween = gsap.to(track.current, {
-          xPercent: reverse ? 0 : -50,
-          ease: "none",
-          duration: items.length * 2.6,
-          repeat: -1,
-        });
-
-        gsap.set(track.current, { xPercent: reverse ? -50 : 0 });
-        return () => tween.kill();
-      });
-    }, track);
-
-    return () => ctx.revert();
-  }, [items.length, reverse]);
-
-  return (
-    <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
-      <div ref={track} className="flex w-max gap-2.5 py-1.5">
-        {[...items, ...items].map((item, i) => (
-          <span
-            key={`${item}-${i}`}
-            className="whitespace-nowrap rounded-lg border border-line bg-surface px-3.5 py-2 font-mono text-[13px] text-muted"
-          >
-            {item}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function TechStack() {
   return (
     <Section id="tecnologias">
@@ -68,15 +24,27 @@ export function TechStack() {
         />
       </Reveal>
 
-      <p className="mt-8 font-mono text-[11px] tracking-tight text-faint">
-        {techGroups.map((g) => g.title).join("  ·  ")}
-      </p>
-
-      <div className="mt-6 space-y-2.5">
-        {rows.map((items, i) => (
-          <Marquee key={i} items={items} reverse={i % 2 === 1} />
+      <dl className="mt-8 border-t border-line">
+        {techGroups.map((group, i) => (
+          <Reveal key={group.title} delay={Math.min(i, 4) * 0.06}>
+            <div className="grid gap-3 border-b border-line py-6 md:grid-cols-[200px_1fr] md:gap-10">
+              <dt className="font-mono text-sm text-accent">{group.title}</dt>
+              {/* Sem etiqueta: quarenta e duas caixinhas de borda e raio numa
+                  seção só é a assinatura visual mais forte de página gerada.
+                  O separador é um fio da cor da régua, não um ponto de texto,
+                  então ele some do olho e sobra a palavra. */}
+              <dd className="font-mono text-[13px] leading-[2] text-muted">
+                {group.items.map((item, j) => (
+                  <span key={item}>
+                    {j > 0 ? <span className="text-line"> · </span> : null}
+                    {item}
+                  </span>
+                ))}
+              </dd>
+            </div>
+          </Reveal>
         ))}
-      </div>
+      </dl>
     </Section>
   );
 }

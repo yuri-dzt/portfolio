@@ -14,10 +14,17 @@ if (typeof window !== "undefined") {
 
 /** Viewports extras que o quadro fica preso. Curto: dá para ver o nó virar
  *  sem transformar a dobra em pedágio antes do resto do site. */
-const PIN_LENGTH = { mobile: 0.75, desktop: 1 };
+const PIN_LENGTH = { mobile: 0.55, desktop: 0.75 };
 
-/** Onde a copy começa a sair e em quanto tempo ela termina de sair. */
-const COPY_EXIT = { start: 0.46, span: 0.3 };
+/**
+ * Onde a copy começa a sair e em quanto tempo ela termina de sair.
+ *
+ * Tarde de propósito. Saindo cedo, o quadro de 100svh passa o resto do pin
+ * sendo só o nó — e esse fundo vazio encontra o topo vazio da cena seguinte
+ * bem na emenda, somando quase uma tela de nada. O texto agora acompanha o
+ * pin quase até o fim.
+ */
+const COPY_EXIT = { start: 0.6, span: 0.28 };
 
 /** Quanto a copy sobe ao sair. Pouco: ela deriva para a navbar. */
 const COPY_DRIFT_PX = 44;
@@ -192,7 +199,9 @@ export function Hero() {
               <a
                 data-enter
                 href="#projetos"
-                className="group inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-medium text-bg transition-[transform,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-accent2 active:translate-y-0 active:scale-[0.98] active:duration-100"
+                /* borda transparente: sem ela este botão fica 2px mais baixo
+                   que o vizinho contornado, e a fileira desalinha na base */
+                className="group inline-flex items-center gap-2 rounded-xl border border-transparent bg-accent px-5 py-3 text-sm font-medium text-bg transition-[transform,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-accent2 active:translate-y-0 active:scale-[0.98] active:duration-100"
               >
                 Ver projetos
                 <ArrowDown
@@ -212,7 +221,7 @@ export function Hero() {
                 href={profile.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-muted transition-colors duration-300 hover:text-ink"
+                className="inline-flex items-center gap-2 rounded-xl border border-transparent px-3 py-3 text-sm font-medium text-muted transition-colors duration-300 hover:text-ink"
               >
                 <Download size={16} /> Currículo
               </a>

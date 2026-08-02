@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Archivo, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import { profile, socials } from "@/data/site";
+import { siteUrl } from "@/lib/site-url";
 
 /**
  * Archivo: grotesca de origem tipográfica industrial, com peso de verdade nos
@@ -19,21 +20,6 @@ const mono = Martian_Mono({
   variable: "--font-mono",
   display: "swap",
 });
-
-/**
- * Domínio usado em canonical, Open Graph e JSON-LD.
- *
- * Em produção, defina NEXT_PUBLIC_SITE_URL com o domínio final. Sem ela, a
- * própria Vercel informa a URL do deploy — assim preview e produção geram
- * links que existem, em vez de apontar para um domínio ainda não comprado.
- */
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

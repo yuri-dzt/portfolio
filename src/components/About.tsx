@@ -7,7 +7,7 @@ export function About() {
     <Section id="sobre">
       <div className="h-px w-full bg-line" />
 
-      <div className="mt-8 grid gap-12 sm:mt-10 md:grid-cols-[1fr_1.2fr]">
+      <div className="mt-10 grid gap-12 sm:mt-14 md:grid-cols-[1fr_1.2fr]">
         <div>
           <Reveal variant="wipe">
             <SectionHeading rule={false} title="Software que dá para manter." />
@@ -15,7 +15,7 @@ export function About() {
 
           {/* ficha técnica: rótulo à esquerda, número à direita */}
           <Reveal delay={0.12}>
-            <dl className="mt-10 border-t border-line">
+            <dl className="mt-8 border-t border-line">
               {about.stats.map((s) => (
                 <div
                   key={s.label}

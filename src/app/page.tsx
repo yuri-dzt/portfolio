@@ -1,4 +1,8 @@
 import { Navbar } from "@/components/Navbar";
+import { Grain } from "@/components/Grain";
+import { Cursor } from "@/components/Cursor";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { VelocitySkew } from "@/components/VelocitySkew";
 import { Hero } from "@/components/Hero";
 import { LayersScene } from "@/components/LayersScene";
 import { About } from "@/components/About";
@@ -14,23 +18,33 @@ import { Footer } from "@/components/Footer";
  * A ordem conta uma história: gancho, o que eu faço, quem eu sou, prova,
  * trabalho, histórico, ferramentas, formação, contato. As antigas seções de
  * "diferenciais", "processo" e "depoimentos" saíram — eram enchimento.
+ *
+ * Navbar, grão e ponteiro ficam FORA do `SmoothScroll`: os três são
+ * `position: fixed`, e `fixed` não sobrevive dentro do conteúdo transformado
+ * que a rolagem interpolada exige.
  */
 export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
-        <Hero />
-        <LayersScene />
-        <About />
-        <Results />
-        <Projects />
-        <Experience />
-        <TechStack />
-        <Education />
-        <Contact />
-      </main>
-      <Footer />
+      <Grain />
+      <Cursor />
+
+      <SmoothScroll>
+        <VelocitySkew />
+        <main>
+          <Hero />
+          <LayersScene />
+          <About />
+          <Results />
+          <Projects />
+          <Experience />
+          <TechStack />
+          <Education />
+          <Contact />
+        </main>
+        <Footer />
+      </SmoothScroll>
     </>
   );
 }

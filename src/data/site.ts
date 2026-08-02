@@ -19,11 +19,11 @@ export const profile = {
 };
 
 export const socials = {
-  email: "yuridonizete303@gmail.com", // e-mail do currículo; troque se preferir o profissional
-  whatsapp: "5535999196082", // (35) 99919-6082
+  email: "yuridonizete303@gmail.com",
+  whatsapp: "5535999196082", // (35) 9 9919-6082
   github: "https://github.com/yuri-dzt",
   linkedin: "https://www.linkedin.com/in/yuridonizete",
-  instagram: "https://instagram.com/yuridzt", // TODO: confirme seu @ profissional
+  instagram: "https://instagram.com/yuridzt",
 };
 
 export const whatsappMessage =
@@ -170,6 +170,33 @@ export const projects: Project[] = [
     preview: "https://bloom-saas.vercel.app",
     link: "https://bloom-saas.vercel.app",
     private: false,
+  },
+  {
+    name: "Yssy — CRM e BI para agência de marketing odontológico",
+    description:
+      "Sistema full-stack para a agência gerenciar a carteira de clínicas: cadastro de empresas e equipes, briefings de onboarding, metas, reuniões e um módulo financeiro com dashboards comercial e financeiro.",
+    // TODO: confirme o problema — escrevi a partir da descrição do sistema
+    problem:
+      "Acompanhar a carteira exigia olhar cadastro, metas, reuniões e financeiro em lugares diferentes. Cliente esfriando e parcela vencida só apareciam quando alguém ia procurar.",
+    result:
+      "Uma base só, com meta mensal acompanhada, ranking automático de performance, recebíveis parcelados e uma leitura da saúde do relacionamento com cada cliente.",
+    tech: [
+      "Node.js",
+      "TypeScript",
+      "Express",
+      "Prisma",
+      "MySQL",
+      "OpenAI",
+      "Next.js 16",
+      "React 19",
+    ],
+    highlights: [
+      "Clean Architecture no back-end — entities, use-cases, interfaces e adapters — com injeção de dependência por factories e o domínio separado do framework.",
+      "Camada de IA sobre a OpenAI que gera leitura qualitativa da saúde do relacionamento com cada cliente.",
+      "Rotinas agendadas com node-cron consolidam o ranking mensal de performance e sinalizam receitas vencidas.",
+      "Autenticação JWT com múltiplos perfis: equipe interna por função e portal próprio para o dono da clínica.",
+    ],
+    private: true,
   },
   {
     name: "Perguntas e respostas sobre base de conhecimento (RAG)",

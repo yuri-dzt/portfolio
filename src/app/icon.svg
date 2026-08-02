@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Ladrilho cheio, não letra solta: em 16px sobre a aba clara ou escura
+       do navegador, uma glifa sem fundo desaparece na metade dos temas. -->
+  <rect width="32" height="32" rx="7" fill="#130e0a" />
+  <path
+    d="M9 9.5 L16 17.5 L23 9.5 M16 17.5 L16 23.5"
+    fill="none"
+    stroke="#e8af4f"
+    stroke-width="3.1"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

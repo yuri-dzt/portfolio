@@ -21,6 +21,7 @@ const links = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
   const header = useRef<HTMLElement>(null);
   const progress = useRef<HTMLSpanElement>(null);
 
@@ -29,6 +30,31 @@ export function Navbar() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /**
+   * Qual seção está sendo lida. A margem negativa deixa só uma faixa fina no
+   * meio da tela contando como "em leitura" — sem isso, num monitor alto duas
+   * ou três seções ficam visíveis ao mesmo tempo e o destaque pisca entre
+   * elas a cada quadro de scroll.
+   */
+  useEffect(() => {
+    const sections = links
+      .map((l) => document.querySelector<HTMLElement>(l.href))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.find((entry) => entry.isIntersecting);
+        if (hit) setActive(`#${hit.target.id}`);
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
   /** Quanto do documento já passou. Instrumento, não enfeite. */
@@ -79,9 +105,22 @@ export function Navbar() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="text-sm text-muted transition-colors duration-300 hover:text-ink"
+                aria-current={active === l.href ? "true" : undefined}
+                className={cn(
+                  "relative text-sm transition-colors duration-300 hover:text-ink",
+                  active === l.href ? "text-ink" : "text-muted"
+                )}
               >
                 {l.label}
+                {/* o fio embaixo do rótulo cresce do centro; some sozinho
+                    quando a leitura passa para a próxima seção */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute -bottom-1.5 left-0 h-px w-full origin-center bg-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                    active === l.href ? "scale-x-100" : "scale-x-0"
+                  )}
+                />
               </a>
             </li>
           ))}

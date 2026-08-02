@@ -75,7 +75,7 @@ function ProjectCard({ project }: { project: Project }) {
     /* o card inteiro gira em 3D; o selo flutua acima da superfície */
     <div
       data-parallax
-      className="[perspective:1100px]"
+      className="h-full [perspective:1100px]"
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
     >
@@ -83,12 +83,13 @@ function ProjectCard({ project }: { project: Project }) {
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         whileHover={{ z: 26 }}
         transition={{ type: "spring", stiffness: 200, damping: 24 }}
-        className="group relative flex flex-col rounded-2xl border border-line bg-surface transition-colors duration-300 hover:border-accent/40"
+        className="group relative flex h-full flex-col rounded-2xl border border-line bg-surface transition-colors duration-300 hover:border-accent/40"
       >
         {hasMedia ? (
           <>
-            {/* raio menos 1px da borda do card, senão a mídia vaza no canto */}
-            <div className="relative aspect-[16/10] overflow-hidden rounded-t-[15px] bg-elevated">
+            {/* Faixa baixa e de proporção fixa: a mídia ilustra o card, não
+                define a altura dele. Raio menos 1px da borda, senão vaza no canto. */}
+            <div className="relative aspect-[2.4/1] overflow-hidden rounded-t-[15px] bg-elevated">
               <ProjectMedia project={project} />
 
               {/* Com prévia ao vivo o iframe não é clicável; a própria área vira o link. */}
@@ -116,20 +117,24 @@ function ProjectCard({ project }: { project: Project }) {
         ) : null}
 
         <div className="flex flex-1 flex-col p-6">
-          <div className="flex flex-wrap items-center gap-1.5">
+          {/* Uma linha de texto no lugar de cinco ou seis etiquetas: dentro de
+              um card que já tem borda, cada etiqueta é uma caixa dentro de
+              outra caixa — e caixa aninhada nunca está certa. */}
+          <div className="flex flex-wrap items-baseline gap-x-2 font-mono text-[11px] leading-relaxed">
             {!hasMedia && project.private ? (
-              <span className="mr-1 inline-flex items-center gap-1.5 rounded-md border border-line bg-elevated px-2 py-0.5 font-mono text-[11px] text-faint">
+              <span className="inline-flex items-center gap-1.5 text-faint">
                 <Lock size={11} /> Privado
+                <span className="text-line">·</span>
               </span>
             ) : null}
-            {project.tech.map((t) => (
-              <span
-                key={t}
-                className="rounded-md border border-line bg-elevated px-2 py-0.5 font-mono text-[11px] text-muted"
-              >
-                {t}
-              </span>
-            ))}
+            <span className="text-muted">
+              {project.tech.map((t, i) => (
+                <span key={t}>
+                  {i > 0 ? <span className="text-line"> · </span> : null}
+                  {t}
+                </span>
+              ))}
+            </span>
           </div>
 
           <h3 className="mt-4 text-lg font-medium text-ink">{project.name}</h3>
@@ -171,7 +176,9 @@ function ProjectCard({ project }: { project: Project }) {
             ) : null}
           </AnimatePresence>
 
-          <div className="mt-6 flex items-center gap-3 border-t border-line pt-5">
+          {/* mt-auto: as ações ancoram no rodapé, então cards de alturas
+              diferentes na mesma linha terminam alinhados */}
+          <div className="mt-auto flex items-center gap-3 border-t border-line pt-5">
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -282,11 +289,16 @@ export function Projects() {
         />
       </Reveal>
 
-      {/* items-start: card sem mídia fica na altura do próprio conteúdo,
-          em vez de esticar até a altura do vizinho e virar caixa vazia */}
-      <div ref={grid} className="mt-12 grid items-start gap-5 md:grid-cols-2">
+      {/* sem items-start: os cards de uma linha esticam para a mesma altura,
+          e o rodapé de cada um fica alinhado com o do vizinho */}
+      <div ref={grid} className="mt-8 grid gap-5 md:grid-cols-2">
         {projects.map((project, i) => (
-          <Reveal key={project.name} variant="tilt" delay={(i % 2) * 0.08}>
+          <Reveal
+            key={project.name}
+            variant="tilt"
+            delay={(i % 2) * 0.08}
+            className="h-full"
+          >
             <ProjectCard project={project} />
           </Reveal>
         ))}

@@ -147,6 +147,84 @@ section[id] {
 }
 
 /* ---------------------------------------------------------------
+   Grão e ponteiro: as duas camadas que ficam por cima de tudo.
+
+   Ambas vivem FORA do `#smooth-content`. Conteúdo transformado não segura
+   `position: fixed`, e um grão que rola junto com a página deixa de ser
+   textura de tela e vira papel de parede.
+   --------------------------------------------------------------- */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.04;
+  /* turbulência fractal, ladrilhada sem emenda; `#` precisa ir escapado */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  height: 30px;
+  width: 30px;
+  border-radius: 999px;
+  border: 1px solid theme("colors.faint");
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 300ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo),
+    background-color 300ms var(--ease-out-expo);
+}
+
+/* só existe depois do primeiro movimento: sem isso ele nasce parado no canto
+   superior esquerdo de toda visita */
+.cursor-ring[data-on] {
+  opacity: 1;
+}
+
+.cursor-ring[data-hot] {
+  border-color: theme("colors.accent");
+  background: color-mix(in oklab, theme("colors.accent") 10%, transparent);
+}
+
+/* ---------------------------------------------------------------
+   O campo âmbar do contato, respirando.
+
+   A página fecha na cor da marca, e um retângulo chapado é onde ela morre.
+   Uma luz larga deriva devagar por baixo do texto — 26s por travessia, sem
+   volta abrupta (`alternate`).
+
+   É uma transformação só, num elemento só, no compositor: não é o tipo de
+   laço que precisa parar fora da tela, e por isso não custa transformar o
+   bloco inteiro em client component para observá-lo.
+   --------------------------------------------------------------- */
+.field-breath {
+  position: absolute;
+  /* estourado para fora: as bordas do gradiente nunca entram no quadro */
+  inset: -35%;
+  background: radial-gradient(
+    42% 42% at 32% 30%,
+    color-mix(in oklab, white 22%, transparent),
+    transparent 72%
+  );
+  animation: field-drift 26s var(--ease-out-quart) infinite alternate;
+}
+
+@keyframes field-drift {
+  from {
+    transform: translate3d(-5%, -3%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(7%, 5%, 0) scale(1.14);
+  }
+}
+
+/* ---------------------------------------------------------------
    Entrada dos blocos ao entrar na viewport.
 
    O estado escondido só existe quando a classe `js` está no <html>,
@@ -215,5 +293,11 @@ section[id] {
     opacity: 1;
     filter: none;
     transform: none;
+  }
+  /* A regra acima zera a DURAÇÃO de toda animação. Num laço infinito isso
+     não para nada: vira a mesma travessia repetida a cada 0,001ms, que é
+     pior que o movimento original. Laço infinito se desliga, não se acelera. */
+  .field-breath {
+    animation: none !important;
   }
 }

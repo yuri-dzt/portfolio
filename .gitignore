@@ -1,5 +1,7 @@
 /node_modules
-/.next/
+# sem âncora: o build já foi gerado dentro de src/ por engano uma vez, e
+# `/.next/` só cobre a raiz
+.next/
 /out/
 /build
 .DS_Store
