@@ -90,6 +90,63 @@ section[id] {
 }
 
 /* ---------------------------------------------------------------
+   A dobra inicial: o nó ao fundo, o texto por cima.
+   --------------------------------------------------------------- */
+
+/* Saída da copy durante o pin. O scroll escreve as três variáveis e o CSS
+   as consome — assim a entrada (GSAP, nos filhos) e a saída (scroll, no
+   pai) nunca disputam a mesma declaração. É também uma escrita de
+   propriedade por quadro, num elemento só. */
+.hero-copy {
+  opacity: var(--hero-copy-opacity, 1);
+  filter: blur(var(--hero-copy-blur, 0px));
+  transform: translate3d(0, var(--hero-copy-y, 0px), 0);
+}
+
+/* Véus sobre o canvas. Sem eles o arame passa por trás do texto e os dois
+   perdem: o nó vira ruído e o texto perde contraste. */
+.hero-wash {
+  background: color-mix(in oklab, theme("colors.bg") 55%, transparent);
+}
+
+/* A luz vem de onde o texto não está. Empilhado no telefone, ao lado no
+   desktop — por isso a direção troca junto com o layout. */
+.hero-side {
+  background: linear-gradient(
+    to top,
+    theme("colors.bg") 6%,
+    color-mix(in oklab, theme("colors.bg") 78%, transparent) 32%,
+    color-mix(in oklab, theme("colors.bg") 22%, transparent) 62%,
+    transparent 86%
+  );
+}
+
+@media (min-width: 768px) {
+  .hero-side {
+    background: linear-gradient(
+      to right,
+      theme("colors.bg") 0%,
+      color-mix(in oklab, theme("colors.bg") 74%, transparent) 30%,
+      color-mix(in oklab, theme("colors.bg") 20%, transparent) 58%,
+      transparent 80%
+    );
+  }
+}
+
+.hero-vignette {
+  background: radial-gradient(
+    120% 92% at 50% 46%,
+    transparent 36%,
+    color-mix(in oklab, theme("colors.bg") 80%, transparent) 100%
+  );
+}
+
+/* Passagem para o corpo da página: o nó não termina, ele se apaga. */
+.hero-foot {
+  background: linear-gradient(to top, theme("colors.bg") 0%, transparent 100%);
+}
+
+/* ---------------------------------------------------------------
    Entrada dos blocos ao entrar na viewport.
 
    O estado escondido só existe quando a classe `js` está no <html>,
@@ -151,5 +208,12 @@ section[id] {
     opacity: 1;
     transform: none;
     clip-path: none;
+  }
+  /* sem pin, ninguém escreve as variáveis — mas se o usuário ligar a
+     preferência no meio da rolagem, os últimos valores ficariam colados */
+  .hero-copy {
+    opacity: 1;
+    filter: none;
+    transform: none;
   }
 }
