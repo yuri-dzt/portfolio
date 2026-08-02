@@ -13,8 +13,9 @@ if (typeof window !== "undefined") {
 }
 
 /** Viewports extras que o quadro fica preso. Curto: dá para ver o nó virar
- *  sem transformar a dobra em pedágio antes do resto do site. */
-const PIN_LENGTH = { mobile: 0.55, desktop: 0.75 };
+ *  sem transformar a dobra em pedágio antes do resto do site.
+ *  Só existe no desktop — no telefone não há pin. */
+const PIN_LENGTH = 0.75;
 
 /**
  * Onde a copy começa a sair e em quanto tempo ela termina de sair.
@@ -115,24 +116,23 @@ export function Hero() {
           "-=1.0"
         );
 
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: "top top",
-        end: () =>
-          `+=${Math.round(
-            window.innerHeight *
-              (window.matchMedia("(min-width: 768px)").matches
-                ? PIN_LENGTH.desktop
-                : PIN_LENGTH.mobile)
-          )}`,
-        pin: frame.current,
-        pinSpacing: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          scrolled.current = self.progress;
-          applyCopyExit(self.progress);
-        },
+      /* O pin é só do desktop, mesma linha de corte que as camadas usam.
+         No telefone o quadro é mais alto que a viewport, e prender um quadro
+         maior que a tela deixa o pé dele inalcançável enquanto o pin dura. */
+      gsap.matchMedia().add("(min-width: 768px)", () => {
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: "top top",
+          end: () => `+=${Math.round(window.innerHeight * PIN_LENGTH)}`,
+          pin: frame.current,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            scrolled.current = self.progress;
+            applyCopyExit(self.progress);
+          },
+        });
       });
     }, root);
 
@@ -141,10 +141,13 @@ export function Hero() {
 
   return (
     <section ref={root} id="top" className="relative">
+      {/* Altura fixa só a partir de `md`. No telefone o conteúdo empilhado
+          passa de 1000px contra uma viewport de ~670: com `height` fixo mais
+          `overflow-hidden` e `items-center`, o excedente era cortado metade em
+          cima e metade embaixo — e o que sumia no topo era o cargo. */}
       <div
         ref={frame}
-        className="relative isolate flex w-full items-center overflow-hidden pb-16 pt-28 sm:pb-20 sm:pt-32"
-        style={{ height: "100svh", minHeight: "36rem" }}
+        className="relative isolate flex min-h-[100svh] w-full items-center overflow-hidden pb-12 pt-24 sm:pb-20 sm:pt-28 md:h-[100svh] md:min-h-[36rem] md:pt-32"
       >
         <Sculpture
           progress={readProgress}
@@ -158,7 +161,7 @@ export function Hero() {
         <div aria-hidden className="hero-vignette absolute inset-0" />
         <div aria-hidden className="hero-foot absolute inset-x-0 bottom-0 h-40" />
 
-        <div className="hero-copy relative z-10 mx-auto grid w-[92%] max-w-content items-end gap-12 md:grid-cols-[1.35fr_1fr]">
+        <div className="hero-copy relative z-10 mx-auto grid w-[92%] max-w-content items-end gap-9 sm:gap-12 md:grid-cols-[1.35fr_1fr]">
           <div>
             <div
               data-enter
@@ -190,12 +193,16 @@ export function Hero() {
 
             <p
               data-split
-              className="mt-7 max-w-xl text-pretty text-lg leading-relaxed text-muted"
+              className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted sm:mt-7 sm:text-lg"
             >
               {profile.tagline}
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            {/* `items-stretch`: os três passam a ter exatamente a mesma
+                altura, e cada um centra o próprio conteúdo. Assim o
+                alinhamento deixa de depender de as caixas darem a mesma
+                medida por coincidência de padding e borda. */}
+            <div className="mt-7 flex flex-wrap items-stretch gap-3 sm:mt-9">
               <a
                 data-enter
                 href="#projetos"
@@ -221,7 +228,10 @@ export function Hero() {
                 href={profile.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-transparent px-3 py-3 text-sm font-medium text-muted transition-colors duration-300 hover:text-ink"
+                /* Mesma geometria dos vizinhos, contraste mais baixo. Como
+                   texto solto ao lado de duas pílulas, ele não lia como ação
+                   terciária — lia como elemento fora do lugar. */
+                className="inline-flex items-center gap-2 rounded-xl border border-line/50 px-5 py-3 text-sm font-medium text-muted transition-[transform,border-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-line hover:text-ink active:translate-y-0 active:scale-[0.98] active:duration-100"
               >
                 <Download size={16} /> Currículo
               </a>
@@ -229,7 +239,9 @@ export function Hero() {
 
             <div
               data-enter
-              className="mt-10 flex items-center gap-5 border-t border-line pt-6 text-muted"
+              /* flex-wrap: em tela estreita a localização ocupa duas linhas e
+                 os ícones desciam espremidos contra ela */
+              className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-4 border-t border-line pt-5 text-muted sm:mt-10 sm:pt-6"
             >
               <span className="font-mono text-[11px] tracking-tight text-faint">
                 {profile.location}

@@ -19,10 +19,12 @@ export function PhotoCard() {
   const light = useMotionTemplate`radial-gradient(260px circle at ${lightX} ${lightY}, rgba(255,255,255,0.16), transparent 70%)`;
 
   return (
+    /* 15rem no telefone: em 4/5 isso são 300px de altura em vez de 360, e a
+       dobra ali é disputada centímetro a centímetro */
     <div
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      className="relative mx-auto w-full max-w-[18rem] [perspective:1200px] sm:max-w-[21rem]"
+      className="relative mx-auto w-full max-w-[15rem] [perspective:1200px] sm:max-w-[21rem]"
     >
       {/* moldura deslocada: profundidade sem sombra desfocada */}
       <div
@@ -39,7 +41,7 @@ export function PhotoCard() {
           src={profile.avatar}
           alt={`Foto de ${profile.name}`}
           fill
-          sizes="(max-width: 640px) 72vw, 336px"
+          sizes="(max-width: 640px) 240px, 336px"
           className="object-cover"
           priority
         />
