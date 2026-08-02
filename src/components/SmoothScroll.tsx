@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
-import { ScrollSmoother, ScrollTrigger } from "@/lib/gsap";
+import { gsap, ScrollSmoother, ScrollTrigger } from "@/lib/gsap";
 
 /** Onde uma âncora pousa: abaixo da navbar, não atrás dela. */
 const ANCHOR_OFFSET = "top 90px";
@@ -25,51 +25,68 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
 
   useLayoutEffect(() => {
     if (!wrapper.current || !content.current) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const smoother = ScrollSmoother.create({
-      wrapper: wrapper.current,
-      content: content.current,
-      smooth: 1,
-      // toque já vem interpolado pelo sistema; suavizar de novo só adiciona
-      // atraso e briga com o momento do dedo
-      smoothTouch: 0,
-      normalizeScroll: true,
-      ignoreMobileResize: true,
-    });
+    const mm = gsap.matchMedia();
 
-    /* O `scroll-behavior: smooth` do CSS e o scrollTo do smoother são dois
-       donos para a mesma rolagem, e o resultado é a âncora chegando torta.
-       Enquanto o smoother existe, o CSS sai do caminho. */
-    const root = document.documentElement;
-    const previousBehavior = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
+    /**
+     * Só no desktop.
+     *
+     * Com `smoothTouch: 0` o smoother nunca suavizou o toque — no telefone ele
+     * entregava apenas os custos: `normalizeScroll` assume a rolagem de toque
+     * em JavaScript no lugar da do sistema, e o conteúdo inteiro vira uma
+     * camada transformada gigante. Duas coisas que engasgam justamente onde há
+     * menos CPU sobrando.
+     */
+    mm.add(
+      "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+      () => {
+        const smoother = ScrollSmoother.create({
+          wrapper: wrapper.current!,
+          content: content.current!,
+          smooth: 1,
+          smoothTouch: 0,
+          normalizeScroll: true,
+          ignoreMobileResize: true,
+        });
 
-    /* Links de hash pulam por padrão; aqui eles passam pelo smoother, senão
-       a página teleporta no meio de uma rolagem suave. */
-    const onClick = (event: MouseEvent) => {
-      if (event.defaultPrevented || event.button !== 0) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        /* O `scroll-behavior: smooth` do CSS e o scrollTo do smoother são dois
+           donos para a mesma rolagem, e o resultado é a âncora chegando torta.
+           Enquanto o smoother existe, o CSS sai do caminho — e no telefone,
+           onde ele não existe, a âncora nativa volta a funcionar sozinha. */
+        const root = document.documentElement;
+        const previousBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
 
-      const anchor = (event.target as HTMLElement | null)?.closest?.("a");
-      const href = anchor?.getAttribute("href");
-      if (!href || !href.startsWith("#") || href === "#") return;
+        /* Links de hash pulam por padrão; aqui eles passam pelo smoother, senão
+           a página teleporta no meio de uma rolagem suave. */
+        const onClick = (event: MouseEvent) => {
+          if (event.defaultPrevented || event.button !== 0) return;
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+            return;
 
-      const target = document.querySelector(href);
-      if (!target) return;
+          const anchor = (event.target as HTMLElement | null)?.closest?.("a");
+          const href = anchor?.getAttribute("href");
+          if (!href || !href.startsWith("#") || href === "#") return;
 
-      event.preventDefault();
-      smoother.scrollTo(target, true, ANCHOR_OFFSET);
-    };
+          const target = document.querySelector(href);
+          if (!target) return;
 
-    document.addEventListener("click", onClick);
-    ScrollTrigger.refresh();
+          event.preventDefault();
+          smoother.scrollTo(target, true, ANCHOR_OFFSET);
+        };
 
-    return () => {
-      document.removeEventListener("click", onClick);
-      root.style.scrollBehavior = previousBehavior;
-      smoother.kill();
-    };
+        document.addEventListener("click", onClick);
+        ScrollTrigger.refresh();
+
+        return () => {
+          document.removeEventListener("click", onClick);
+          root.style.scrollBehavior = previousBehavior;
+          smoother.kill();
+        };
+      }
+    );
+
+    return () => mm.revert();
   }, []);
 
   return (

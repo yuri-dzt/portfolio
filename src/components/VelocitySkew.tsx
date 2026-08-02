@@ -30,6 +30,12 @@ export function VelocitySkew() {
   useLayoutEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    /* Desktop apenas. Inclinar sete contêineres do tamanho da tela obriga o
+       navegador a rasterizar camadas grandes a cada evento de scroll — no
+       telefone isso aparece como travamento, e a inclinação de 1,3° que
+       custou isso é imperceptível num aparelho na mão. */
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
+
     const targets = gsap.utils.toArray<HTMLElement>("[data-skew]");
     if (!targets.length) return;
 
