@@ -124,17 +124,22 @@ function ProjectCard({ project }: { project: Project }) {
             {!hasMedia && project.private ? (
               <span className="inline-flex items-center gap-1.5 text-faint">
                 <Lock size={11} /> Privado
-                <span className="text-line">·</span>
+                {/* o separador só existe se houver algo depois dele: um
+                    projeto ainda sem stack preenchida mostrava "Privado ·"
+                    com o ponto pendurado no vazio */}
+                {project.tech.length ? <span className="text-line">·</span> : null}
               </span>
             ) : null}
-            <span className="text-muted">
-              {project.tech.map((t, i) => (
-                <span key={t}>
-                  {i > 0 ? <span className="text-line"> · </span> : null}
-                  {t}
-                </span>
-              ))}
-            </span>
+            {project.tech.length ? (
+              <span className="text-muted">
+                {project.tech.map((t, i) => (
+                  <span key={t}>
+                    {i > 0 ? <span className="text-line"> · </span> : null}
+                    {t}
+                  </span>
+                ))}
+              </span>
+            ) : null}
           </div>
 
           <h3 className="mt-4 text-lg font-medium text-ink">{project.name}</h3>

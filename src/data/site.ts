@@ -175,7 +175,6 @@ export const projects: Project[] = [
     name: "Yssy — CRM e BI para agência de marketing odontológico",
     description:
       "Sistema full-stack para a agência gerenciar a carteira de clínicas: cadastro de empresas e equipes, briefings de onboarding, metas, reuniões e um módulo financeiro com dashboards comercial e financeiro.",
-    // TODO: confirme o problema — escrevi a partir da descrição do sistema
     problem:
       "Acompanhar a carteira exigia olhar cadastro, metas, reuniões e financeiro em lugares diferentes. Cliente esfriando e parcela vencida só apareciam quando alguém ia procurar.",
     result:
@@ -258,6 +257,38 @@ export const projects: Project[] = [
     // link: "https://heychef.vercel.app",
   },
   {
+    name: "Z-Live — transmissões gravadas com exibição programada",
+    description:
+      "Plataforma onde a transmissão é gravada uma vez, enviada como arquivo e reexibida em horários programados, com recorrência por dia da semana e interação roteirizada.",
+    problem:
+      "Uma transmissão ao vivo só existe se o apresentador estiver disponível naquele minuto exato. Alcançar um público novo significava refazer a apresentação inteira, e a qualidade da interação dependia de quem por acaso aparecia.",
+    result:
+      "Uma gravação passa a rodar quantas vezes o calendário pedir, sempre no mesmo padrão, com a interação acontecendo nos momentos certos da apresentação.",
+    tech: ["Node.js", "TypeScript", "Fastify", "React"],
+    highlights: [
+      "Agendamento com recorrência: horário, dias da semana e repetição configurados por transmissão.",
+      "Comentários programados para instantes específicos da gravação, configuráveis um a um.",
+      "O arquivo é enviado uma vez e reaproveitado por todas as exibições seguintes.",
+    ],
+    private: true,
+  },
+  {
+    name: "CRM interno de vendas",
+    description:
+      "CRM construído sob o processo da equipe: carteira geral de leads, posse individual com prazo de validade e registro de data e valor no fechamento.",
+    problem:
+      "Nenhuma opção de mercado atendia ao processo de vendas como ele era de fato. E sem regra de posse, uma lista compartilhada dá nos dois extremos: ou dois vendedores abordam o mesmo lead, ou um reivindica o contato e o lead envelhece parado sem ninguém perceber.",
+    result:
+      "Fica explícito quem está falando com quem, e o lead que não avança volta sozinho para a circulação em vez de ficar preso com quem não converteu.",
+    tech: ["Node.js", "TypeScript", "Fastify", "React"],
+    highlights: [
+      "Carteira geral e carteira individual: o lead aparece para todos até responder a alguém, e a partir da resposta passa a ser daquele vendedor.",
+      "A posse tem prazo. Vencido o período sem venda, o lead retorna à carteira geral automaticamente — é a regra que impede tanto a abordagem duplicada quanto o acúmulo de contato parado.",
+      "O fechamento registra data e valor da venda, ligando o resultado ao vendedor que atendeu.",
+    ],
+    private: true,
+  },
+  {
     name: "Controle de ponto e banco de horas",
     description:
       "Sistema que apura jornada, intervalos e banco de horas da equipe, com gestão de afastamentos e anexos.",
@@ -313,7 +344,7 @@ export const projects: Project[] = [
       "Todo problema relatado no WhatsApp virava mensagem solta: dúvida repetida consumia o time, e o que era caso real se perdia sem ninguém dono do atendimento.",
     result:
       "As dúvidas recorrentes passaram a ser resolvidas na hora pelo próprio agente, e só o que ele não dá conta chega ao time — já registrado no Trello, com contexto e responsável avisado.",
-    tech: ["WhatsApp", "Trello API", "Automação"], // TODO: complete com a stack real (linguagem, modelo de IA, hospedagem)
+    tech: ["WhatsApp", "Trello API", "Automação"],
     highlights: [
       "Primeira camada de atendimento automática: o agente tenta resolver antes de escalar.",
       "Escalonamento só quando necessário, com abertura de card no Trello a partir da conversa.",
@@ -322,6 +353,87 @@ export const projects: Project[] = [
     // TODO: coloque um print real do projeto em /public/projects/ e aponte aqui
     // (ex.: image: "/projects/rag.jpg") — o card volta a ter área de mídia.
     // image: "",
+    private: true,
+  },
+  {
+    name: "Automação de captação de leads de campanhas do Meta",
+    description:
+      "Automação que recebe o webhook da campanha, grava o lead em base e avisa a equipe de vendas na hora em que ele chega.",
+    problem:
+      "O lead chegava e ficava parado até alguém abrir a plataforma e transportar o contato à mão. Em captação paga, esse intervalo é justamente onde o lead esfria — e não sobrava base própria de quem tinha entrado.",
+    result:
+      "O lead passa a ser gravado e anunciado ao vendedor no instante em que a campanha o entrega, com histórico ficando em base própria em vez de só na plataforma do anunciante.",
+    tech: ["N8N", "Webhooks", "Meta Ads"],
+    highlights: [
+      "Fluxo montado em N8N: o webhook da campanha dispara a gravação do lead e a notificação ao time no mesmo disparo.",
+      "A base de leads fica do lado da empresa, e não apenas dentro da plataforma de anúncios.",
+      "Escopo honesto: a configuração das campanhas no Meta foi do gestor de tráfego. O que é meu é a automação, do webhook em diante.",
+    ],
+    private: true,
+  },
+  {
+    name: "Controle de presença em eventos",
+    description:
+      "A organização sobe a planilha de quem é esperado no evento e passa a marcar presença, venda e vendedor pelo sistema, no lugar da lista impressa.",
+    problem:
+      "A presença era anotada em folha de papel. Além de lento e sujeito a erro de anotação, não sobrava base nenhuma depois: perder a folha era perder os dados do evento inteiro.",
+    result:
+      "Presença conferida mais rápido e com menos erro, e o evento passa a deixar histórico consultável — quem veio, quem comprou e quem vendeu.",
+    tech: ["Node.js", "TypeScript", "Fastify", "React"],
+    highlights: [
+      "Lista de esperados importada por planilha, então o cadastro do evento não precisa ser refeito à mão.",
+      "Presença, compra e vendedor registrados no mesmo ato, o que liga o resultado de venda a quem atendeu.",
+      "O histórico passa a viver em banco: antes, a folha extraviada levava junto o único registro do evento.",
+    ],
+    private: true,
+  },
+  {
+    name: "Gerador automatizado de voucher de acesso",
+    description:
+      "O lead preenche um formulário e recebe na hora um voucher personalizado, com a foto e o nome dele e os dados do evento.",
+    problem:
+      "Emitir acesso a cada lead era trabalho manual, e o dado que a operação precisava para reconhecer a pessoa na porta ficava espalhado no meio das respostas do formulário.",
+    result:
+      "Voucher emitido no envio do formulário, sem ninguém no meio, e já com a informação que a equipe precisa para receber a pessoa no local.",
+    tech: ["Node.js", "TypeScript", "Fastify", "React"],
+    highlights: [
+      "Voucher gerado no próprio envio do formulário, com foto e nome do participante.",
+      "A foto é puxada automaticamente do Instagram a partir do formulário, sem pedir upload ao lead.",
+      "Local e dados do evento vão impressos no voucher, que passa a servir tanto ao participante quanto à portaria.",
+    ],
+    private: true,
+  },
+  {
+    name: "Leitor de notas por foto para custo de evento",
+    description:
+      "A pessoa fotografa a nota, e a IA extrai data, valor e estabelecimento, alimentando o controle de gasto do evento.",
+    problem:
+      "O gasto de evento dependia de alguém digitar nota por nota depois, e a nota de papel some antes disso acontecer.",
+    result:
+      "O custo do evento passa a ser lançado no momento da compra, com data, valor e estabelecimento estruturados em vez de um bolo de comprovantes.",
+    // "APIs de IA" e não "generativa": aqui o modelo lê e extrai de uma
+    // imagem, não gera conteúdo. TODO: se quiser, troque pelo serviço real.
+    tech: ["Node.js", "TypeScript", "Fastify", "React", "APIs de IA"],
+    highlights: [
+      "Foto do comprovante vira registro estruturado: data, valor e estabelecimento.",
+      "Leitura por IA no lugar da digitação manual, que era onde o lançamento parava.",
+      "Gasto consolidado por estabelecimento e por data, o que dá leitura de custo por evento.",
+    ],
+    private: true,
+  },
+  {
+    name: "Base de processos internos",
+    description:
+      "Aplicação onde os processos da empresa ficam escritos e consultáveis por qualquer pessoa da equipe.",
+    problem:
+      "O procedimento morava na cabeça de quem sempre fez, então toda dúvida virava interrupção — alguém parava de trabalhar para explicar de novo o que já tinha explicado antes.",
+    result:
+      "A equipe passa a resolver a dúvida na consulta em vez de na interrupção, e o conhecimento deixa de depender de uma pessoa específica estar disponível.",
+    tech: ["Node.js", "TypeScript", "Fastify", "React"],
+    highlights: [
+      "Processos escritos em um lugar só, com acesso aberto a toda a equipe.",
+      "Tira do especialista o papel de ser o único caminho até a informação.",
+    ],
     private: true,
   },
   {
@@ -343,25 +455,6 @@ export const projects: Project[] = [
     // image: "",
     private: false,
     link: "", // coloque aqui a URL de uma página publicada, se quiser mostrar
-  },
-  {
-    name: "Painel interno de prospecção",
-    description:
-      "Dashboard que eu construí para uso próprio, para organizar leads, mensagens e status de contato em um lugar só.",
-    problem:
-      "Controlar prospecção em planilha e anotação solta fazia contato esfriar sem retorno e eu perder o histórico de quem já tinha sido abordado.",
-    result:
-      "Prospecção organizada em um painel só, com status por contato e histórico do que já foi enviado.",
-    tech: ["React", "TypeScript", "Node.js"], // TODO: confirme a stack real
-    highlights: [
-      "Cadastro e acompanhamento de leads com status de contato.",
-      "Mensagens prontas para agilizar a abordagem.",
-      "Busca e filtros sobre a base de contatos.",
-    ],
-    // TODO: coloque um print real do projeto em /public/projects/ e aponte aqui
-    // (ex.: image: "/projects/rag.jpg") — o card volta a ter área de mídia.
-    // image: "",
-    private: true,
   },
 ];
 
